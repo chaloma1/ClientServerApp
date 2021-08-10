@@ -17,25 +17,16 @@ import java.util.*;
 public class DefaultController {
 
     @Autowired
-    SystemUsageDataRepository systemUsageDataRepository;
+    private SystemUsageDataRepository systemUsageDataRepository;
 
-
-    SystemUsageData systemUsageData;
-
-    List<SystemUsageData> dataList = new ArrayList<>();
-
-    List<SystemUsageData> dangerousUsages = new ArrayList<>();
-
-
-
-
+    private SystemUsageData systemUsageData;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String defaultPage(HttpSession session){
 
         String[] hostNames = systemUsageDataRepository.findAllHostNames();
 
-        dangerousUsages = systemUsageDataRepository.findDangerousUsages();
+        List<SystemUsageData> dangerousUsages = systemUsageDataRepository.findDangerousUsages();
 
 
         System.out.println(dangerousUsages.size() + " " + "dangerousUsages");
@@ -61,8 +52,7 @@ public class DefaultController {
         }
 
 
-        dataList = systemUsageDataRepository.findLatestUsages(hostName);
-
+        List<SystemUsageData> dataList = systemUsageDataRepository.findLatestUsages(hostName);
         dataList = sortListByDate(dataList);
 
 
@@ -82,18 +72,14 @@ public class DefaultController {
         DecimalFormat df = new DecimalFormat("###.##");
 
 
+        // critical usage examples
         systemUsageDataRepository.save(new SystemUsageData("testCriticalUsage", "hradec", 95.0, 2.1, 0.5, new Date()));
-
         systemUsageDataRepository.save(new SystemUsageData("testCriticalUsage", "hradec", 91.0, 6.8, 4.5, new Date()));
-
         systemUsageDataRepository.save(new SystemUsageData("testCriticalUsage", "hradec", 50.0, 4.3, 0.7, new Date()));
 
         for (int i = 0; i<= 10; i++) {
 
             Date date = new Date();
-
-
-
 
             systemUsageData =
                     new SystemUsageData(
